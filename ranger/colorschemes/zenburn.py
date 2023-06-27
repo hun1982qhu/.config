@@ -44,7 +44,7 @@ class Zenburn(ColorScheme):
                 attr |= bold
                 fg = 223
             elif context.executable and not \
-                    any((context.media, context.container,
+                        any((context.media, context.container,
                          context.fifo, context.socket)):
                 attr |= bold
                 fg = 108
@@ -53,8 +53,8 @@ class Zenburn(ColorScheme):
                 attr |= bold
             if context.fifo or context.device:
                 fg = 144
-                if context.device:
-                    attr |= bold
+            if context.device:
+                attr |= bold
             if context.link:
                 fg = 223 if context.good else 116
                 bg = 234
