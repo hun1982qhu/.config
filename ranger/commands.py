@@ -32,8 +32,7 @@ class mkcd(Command):
         if not lexists(dirname):
             makedirs(dirname)
 
-            match = re.search('^/|^~[^/]*/', dirname)
-            if match:
+            if match := re.search('^/|^~[^/]*/', dirname):
                 self.fm.cd(match.group(0))
                 dirname = dirname[match.end(0):]
 
@@ -45,7 +44,7 @@ class mkcd(Command):
                 else:
                     ## We force ranger to load content before calling `scout`.
                     self.fm.thisdir.load_content(schedule=False)
-                    self.fm.execute_console('scout -ae ^{}$'.format(s))
+                    self.fm.execute_console(f'scout -ae ^{s}$')
         else:
             self.fm.notify("file/directory exists!", bad=True)
 
@@ -102,9 +101,9 @@ class compress(Command):
         parts = self.line.split()
         au_flags = parts[1:]
 
-        descr = "compressing files in: " + os.path.basename(parts[1])
+        descr = f"compressing files in: {os.path.basename(parts[1])}"
         obj = CommandLoader(args=['apack'] + au_flags + \
-                [os.path.relpath(f.path, cwd.path) for f in marked_files], descr=descr, read=True)
+                    [os.path.relpath(f.path, cwd.path) for f in marked_files], descr=descr, read=True)
 
         obj.signal_bind('after', refresh)
         self.fm.loader.add(obj)
@@ -114,7 +113,7 @@ class compress(Command):
 
         extension = ['.zip', '.tar.gz', '.rar', '.7z']
         return [
-            'compress ' + os.path.basename(self.fm.thisdir.path) + ext
+            f'compress {os.path.basename(self.fm.thisdir.path)}{ext}'
             for ext in extension
         ]
 
@@ -141,12 +140,11 @@ class extracthere(Command):
         self.fm.copy_buffer.clear()
         self.fm.cut_buffer = False
         if len(copied_files) == 1:
-            descr = "extracting: " + os.path.basename(one_file.path)
+            descr = f"extracting: {os.path.basename(one_file.path)}"
         else:
-            descr = "extracting files from: " + os.path.basename(
-                one_file.dirname)
+            descr = f"extracting files from: {os.path.basename(one_file.dirname)}"
         obj = CommandLoader(args=['aunpack'] + au_flags \
-                + [f.path for f in copied_files], descr=descr, read=True)
+                    + [f.path for f in copied_files], descr=descr, read=True)
 
         obj.signal_bind('after', refresh)
         self.fm.loader.add(obj)
